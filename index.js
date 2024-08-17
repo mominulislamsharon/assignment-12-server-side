@@ -36,6 +36,22 @@ async function run() {
     const menuCollection = client.db("finalTourDb").collection("menu");
     const reviewCollection = client.db("finalTourDb").collection("reviews");
     const cartCollection = client.db("finalTourDb").collection("carts");
+    const userCollection = client.db("finalTourDb").collection("users");
+
+
+    // user related api 
+    app.post('/users', async(req, res)=> {
+      const user = req.body; 
+      const query = {email: user.email}
+      const existingUser = await userCollection.findOne(query);
+      if(existingUser){
+        return res.send({message: "user already exist", insertedId: null})
+      }
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    })
+
+
 
     app.get('/menu', async(req, res) => {
       const result = await menuCollection.find().toArray();
