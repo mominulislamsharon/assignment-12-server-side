@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-
+const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
@@ -39,8 +39,16 @@ async function run() {
     const userCollection = client.db("finalTourDb").collection("users");
 
 
+    // jwt token related api 
+    app.post('/jwt', async(req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h' });
+      res.send({token});
+    })
+
     // user related api 
     app.get('/users', async(req, res) => {
+      console.log(req.headers);
       const result = await userCollection.find().toArray();
       res.send(result);
     } )
