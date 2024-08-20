@@ -214,6 +214,15 @@ async function run() {
       res.send({
         clientSecret: paymentIntent.client_secret
       })
+    });
+
+    app.get('/payments/:email', verifyToken, async(req, res) => {
+      const query = {email: req.params.email};
+      if(req.params.email !== req.params.email){
+        return res.status(403).send({message: 'forbidden access'});
+      }
+      const result = await paymentCollection.find(query).toArray();
+      res.send(result);
     })
 
  
