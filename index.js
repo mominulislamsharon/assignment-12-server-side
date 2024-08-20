@@ -39,6 +39,7 @@ async function run() {
     const reviewCollection = client.db("finalTourDb").collection("reviews");
     const cartCollection = client.db("finalTourDb").collection("carts");
     const userCollection = client.db("finalTourDb").collection("users");
+    const paymentCollection = client.db("finalTourDb").collection("payments");
 
 
     // jwt token related api 
@@ -203,7 +204,7 @@ async function run() {
     app.post('/create-payment-intent', async(req, res) => {
       const {price} = req.body;
       const amount = parseInt(price * 100);
-      console.log(amount, 'amonut the inscetn')
+
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amount,
         currency: 'usd',
@@ -214,6 +215,23 @@ async function run() {
         clientSecret: paymentIntent.client_secret
       })
     })
+
+ 
+    app.post('/payments', async(req, res) => {
+      const payment = req.body;
+      const paymentResult = await paymentCollection.insertOne(payment);
+
+       //delete item each the from cart 
+      console.log('payment info', payment);
+      const query = {_id: {
+        $in: payment.cartIds.map(id => new ObjectId(id))
+      }};
+
+      const deleteResult = await cartCollection.deleteMany(query);
+
+      res.send({paymentResult, deleteResult});
+    })
+
 
 
 
