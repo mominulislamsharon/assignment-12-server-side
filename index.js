@@ -111,6 +111,7 @@ async function run() {
 
     app.delete('/users/:id', verifyToken, verifyAdmin, async(req, res) => {
       const id = req.params.id;
+      console.log('diddd', id);
       const query = {_id: new ObjectId(id)};
       const result = await userCollection.deleteOne(query)
       res.send(result);
@@ -164,6 +165,10 @@ async function run() {
       const result = await menuCollection.updateOne(filter, updatedDoc);
       res.send(result);
     })
+
+
+
+    
 
     app.delete('/menu/:id', verifyToken, verifyAdmin, async(req, res) => {
       const id = req.params.id;
@@ -312,8 +317,8 @@ async function run() {
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
